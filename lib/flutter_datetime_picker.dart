@@ -30,6 +30,7 @@ class DatePicker {
     locale: LocaleType.en,
     DateTime? currentTime,
     DatePickerTheme? theme,
+    String title = "",
   }) async {
     return await Navigator.push(
       context,
@@ -40,6 +41,7 @@ class DatePicker {
         onCancel: onCancel,
         locale: locale,
         theme: theme,
+        title: title,
         barrierLabel:
             MaterialLocalizations.of(context).modalBarrierDismissLabel,
         pickerModel: DatePickerModel(
@@ -65,6 +67,7 @@ class DatePicker {
     locale: LocaleType.en,
     DateTime? currentTime,
     DatePickerTheme? theme,
+    String title = "",
   }) async {
     return await Navigator.push(
       context,
@@ -75,6 +78,7 @@ class DatePicker {
         onCancel: onCancel,
         locale: locale,
         theme: theme,
+        title: title,
         barrierLabel:
             MaterialLocalizations.of(context).modalBarrierDismissLabel,
         pickerModel: TimePickerModel(
@@ -193,6 +197,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
     DatePickerTheme? theme,
     this.barrierLabel,
     this.locale,
+    this.title = "",
     RouteSettings? settings,
     BasePickerModel? pickerModel,
   })  : this.pickerModel = pickerModel ?? DatePickerModel(),
@@ -206,6 +211,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
   final LocaleType? locale;
   final DatePickerTheme theme;
   final BasePickerModel pickerModel;
+  final String title;
 
   @override
   Duration get transitionDuration => const Duration(milliseconds: 200);
@@ -240,6 +246,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         locale: this.locale,
         route: this,
         pickerModel: pickerModel,
+        title: title,
       ),
     );
     return InheritedTheme.captureAll(context, bottomSheet);
@@ -253,6 +260,7 @@ class _DatePickerComponent extends StatefulWidget {
     required this.pickerModel,
     this.onChanged,
     this.locale,
+    this.title = "",
   }) : super(key: key);
 
   final DateChangedCallback? onChanged;
@@ -260,6 +268,7 @@ class _DatePickerComponent extends StatefulWidget {
   final _DatePickerRoute route;
 
   final LocaleType? locale;
+  final String title;
 
   final BasePickerModel pickerModel;
 
@@ -309,7 +318,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
               child: GestureDetector(
                 child: Material(
                   color: theme.backgroundColor,
-                  child: _renderPickerView(theme),
+                  child: _renderPickerView(theme, widget.title),
                 ),
               ),
             ),
@@ -325,12 +334,12 @@ class _DatePickerState extends State<_DatePickerComponent> {
     }
   }
 
-  Widget _renderPickerView(DatePickerTheme theme) {
+  Widget _renderPickerView(DatePickerTheme theme, String title) {
     Widget itemView = _renderItemView(theme);
     if (widget.route.showTitleActions == true) {
       return Column(
         children: <Widget>[
-          _renderTitleActionsView(theme),
+          _renderTitleActionsView(theme, title),
           itemView,
         ],
       );
@@ -467,7 +476,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
   }
 
   // Title View
-  Widget _renderTitleActionsView(DatePickerTheme theme) {
+  Widget _renderTitleActionsView(DatePickerTheme theme, String title) {
     final done = _localeDone();
     final cancel = _localeCancel();
 
@@ -495,6 +504,10 @@ class _DatePickerState extends State<_DatePickerComponent> {
                 }
               },
             ),
+          ),
+          Text(
+            '$title',
+            style: theme.cancelStyle,
           ),
           Container(
             height: theme.titleHeight,
