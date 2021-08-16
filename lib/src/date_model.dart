@@ -1,7 +1,9 @@
+import 'dart:math';
+
 import 'package:flutter_datetime_picker/src/date_format.dart';
 import 'package:flutter_datetime_picker/src/i18n_model.dart';
+
 import 'datetime_util.dart';
-import 'dart:math';
 
 //interface for picker data model
 abstract class BasePickerModel {
@@ -135,6 +137,7 @@ class DatePickerModel extends CommonPickerModel {
       {DateTime? currentTime,
       DateTime? maxTime,
       DateTime? minTime,
+      String? format,
       LocaleType? locale})
       : super(locale: locale) {
     this.maxTime = maxTime ?? DateTime(2049, 12, 31);
@@ -152,7 +155,6 @@ class DatePickerModel extends CommonPickerModel {
 
     _fillLeftLists();
     _fillMiddleLists();
-    _fillRightLists();
     int minMonth = _minMonthOfCurrentYear();
     int minDay = _minDayOfCurrentMonth();
     _currentLeftIndex = this.currentTime.year - this.minTime.year;

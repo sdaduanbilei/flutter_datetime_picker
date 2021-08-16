@@ -9,10 +9,10 @@ class DatePickerTheme with DiagnosticableTreeMixin {
   final TextStyle itemStyle;
   final Color backgroundColor;
   final Color? headerColor;
-
   final double containerHeight;
   final double titleHeight;
   final double itemHeight;
+  final int itemModel;
 
   const DatePickerTheme({
     this.cancelStyle = const TextStyle(color: Colors.black54, fontSize: 16),
@@ -23,5 +23,6 @@ class DatePickerTheme with DiagnosticableTreeMixin {
     this.containerHeight = 210.0,
     this.titleHeight = 44.0,
     this.itemHeight = 36.0,
+    this.itemModel = 3,
   });
 }

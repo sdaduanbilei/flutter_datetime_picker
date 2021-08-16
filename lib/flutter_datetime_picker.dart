@@ -1,14 +1,15 @@
 library flutter_datetime_picker;
 
 import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
 import 'package:flutter_datetime_picker/src/date_model.dart';
+import 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
 import 'package:flutter_datetime_picker/src/i18n_model.dart';
 
-export 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
 export 'package:flutter_datetime_picker/src/date_model.dart';
+export 'package:flutter_datetime_picker/src/datetime_picker_theme.dart';
 export 'package:flutter_datetime_picker/src/i18n_model.dart';
 
 typedef DateChangedCallback(DateTime time);
@@ -22,6 +23,7 @@ class DatePicker {
   static Future<DateTime?> showDatePicker(
     BuildContext context, {
     bool showTitleActions: true,
+    String format: 'yyyy-MM-dd HH:mm:ss',
     DateTime? minTime,
     DateTime? maxTime,
     DateChangedCallback? onChanged,
@@ -36,6 +38,7 @@ class DatePicker {
       context,
       _DatePickerRoute(
         showTitleActions: showTitleActions,
+        format: format,
         onChanged: onChanged,
         onConfirm: onConfirm,
         onCancel: onCancel,
@@ -191,6 +194,7 @@ class DatePicker {
 class _DatePickerRoute<T> extends PopupRoute<T> {
   _DatePickerRoute({
     this.showTitleActions,
+    this.format,
     this.onChanged,
     this.onConfirm,
     this.onCancel,
@@ -205,6 +209,7 @@ class _DatePickerRoute<T> extends PopupRoute<T> {
         super(settings: settings);
 
   final bool? showTitleActions;
+  final String? format;
   final DateChangedCallback? onChanged;
   final DateChangedCallback? onConfirm;
   final DateCancelledCallback? onCancel;
@@ -405,6 +410,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
   }
 
   Widget _renderItemView(DatePickerTheme theme) {
+    var show = theme.itemModel;
     return Container(
       color: theme.backgroundColor,
       child: Row(
@@ -427,49 +433,58 @@ class _DatePickerState extends State<_DatePickerComponent> {
                   })
                 : null,
           ),
-          Text(
-            widget.pickerModel.leftDivider(),
-            style: theme.itemStyle,
-          ),
-          Container(
-            child: widget.pickerModel.layoutProportions()[1] > 0
-                ? _renderColumnView(
-                    ValueKey(widget.pickerModel.currentLeftIndex()),
-                    theme,
-                    widget.pickerModel.middleStringAtIndex,
-                    middleScrollCtrl,
-                    widget.pickerModel.layoutProportions()[1], (index) {
-                    widget.pickerModel.setMiddleIndex(index);
-                  }, (index) {
-                    setState(() {
-                      refreshScrollOffset();
-                      _notifyDateChanged();
-                    });
-                  })
-                : null,
-          ),
-          Text(
-            widget.pickerModel.rightDivider(),
-            style: theme.itemStyle,
-          ),
-          Container(
-            child: widget.pickerModel.layoutProportions()[2] > 0
-                ? _renderColumnView(
-                    ValueKey(widget.pickerModel.currentMiddleIndex() * 100 +
-                        widget.pickerModel.currentLeftIndex()),
-                    theme,
-                    widget.pickerModel.rightStringAtIndex,
-                    rightScrollCtrl,
-                    widget.pickerModel.layoutProportions()[2], (index) {
-                    widget.pickerModel.setRightIndex(index);
-                  }, (index) {
-                    setState(() {
-                      refreshScrollOffset();
-                      _notifyDateChanged();
-                    });
-                  })
-                : null,
-          ),
+          show >= 2
+              ? Text(
+                  widget.pickerModel.leftDivider(),
+                  style: theme.itemStyle,
+                )
+              : Container(),
+          show >= 2
+              ? Container(
+                  child: widget.pickerModel.layoutProportions()[1] > 0
+                      ? _renderColumnView(
+                          ValueKey(widget.pickerModel.currentLeftIndex()),
+                          theme,
+                          widget.pickerModel.middleStringAtIndex,
+                          middleScrollCtrl,
+                          widget.pickerModel.layoutProportions()[1], (index) {
+                          widget.pickerModel.setMiddleIndex(index);
+                        }, (index) {
+                          setState(() {
+                            refreshScrollOffset();
+                            _notifyDateChanged();
+                          });
+                        })
+                      : null,
+                )
+              : Container(),
+          show == 3
+              ? Text(
+                  widget.pickerModel.rightDivider(),
+                  style: theme.itemStyle,
+                )
+              : Container(),
+          show == 3
+              ? Container(
+                  child: widget.pickerModel.layoutProportions()[2] > 0
+                      ? _renderColumnView(
+                          ValueKey(
+                              widget.pickerModel.currentMiddleIndex() * 100 +
+                                  widget.pickerModel.currentLeftIndex()),
+                          theme,
+                          widget.pickerModel.rightStringAtIndex,
+                          rightScrollCtrl,
+                          widget.pickerModel.layoutProportions()[2], (index) {
+                          widget.pickerModel.setRightIndex(index);
+                        }, (index) {
+                          setState(() {
+                            refreshScrollOffset();
+                            _notifyDateChanged();
+                          });
+                        })
+                      : null,
+                )
+              : Container(),
         ],
       ),
     );
