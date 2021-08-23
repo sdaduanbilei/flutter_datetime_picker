@@ -155,6 +155,7 @@ class DatePickerModel extends CommonPickerModel {
 
     _fillLeftLists();
     _fillMiddleLists();
+    _fillRightLists();
     int minMonth = _minMonthOfCurrentYear();
     int minDay = _minDayOfCurrentMonth();
     _currentLeftIndex = this.currentTime.year - this.minTime.year;
@@ -207,6 +208,7 @@ class DatePickerModel extends CommonPickerModel {
     this.rightList = List.generate(maxDay - minDay + 1, (int index) {
       return '${minDay + index}${_localeDay()}';
     });
+    print("object${this.rightList}");
   }
 
   @override
